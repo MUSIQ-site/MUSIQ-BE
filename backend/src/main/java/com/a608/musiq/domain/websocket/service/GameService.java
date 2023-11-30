@@ -692,6 +692,7 @@ public class GameService {
 				.title(createGameRoomRequestDto.getRoomName())
 				.years(createGameRoomRequestDto.getMusicYear())
 				.roomManagerNickname(nickname)
+				.password(createGameRoomRequestDto.getPassword())
 				.isStarted(Boolean.FALSE)
 				.createdAt(LocalDateTime.now())
 				.build())
