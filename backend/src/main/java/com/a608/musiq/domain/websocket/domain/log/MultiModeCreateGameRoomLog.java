@@ -32,6 +32,9 @@ public class MultiModeCreateGameRoomLog {
 	@Column
 	private String title;
 
+	@Column
+	private String password;
+
 	@NotNull
 	@Column
 	private String years;
