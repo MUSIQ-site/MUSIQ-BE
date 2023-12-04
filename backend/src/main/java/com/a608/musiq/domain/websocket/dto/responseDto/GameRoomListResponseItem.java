@@ -11,6 +11,7 @@ public class GameRoomListResponseItem {
     private String roomTitle;
     private String roomManager;
     private int currentMembers;
+    private int currentRound;
     private int quizAmount;
     private Boolean isPrivate;
     private Boolean isPlay;
