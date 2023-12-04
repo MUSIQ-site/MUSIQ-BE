@@ -523,6 +523,7 @@ public class GameService {
 						.roomTitle(gameRoom.getRoomName())
 						.roomManager(roomManager.getNickname())
 						.currentMembers(gameRoom.getTotalUsers())
+						.currentRound(gameRoom.getRound())
 						.quizAmount(gameRoom.getNumberOfProblems())
 						.isPrivate(!gameRoom.getPassword().equals(""))
 						.isPlay(gameRoom.getGameRoomType().equals(GameRoomType.GAME))
