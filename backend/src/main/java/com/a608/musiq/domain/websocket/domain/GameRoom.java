@@ -32,7 +32,6 @@ import lombok.NoArgsConstructor;
 public class GameRoom {
     private static final int LEAST_MEMBER_SIZE = 1;
     private static final int ROOM_DIVIDE_NUMBER = 1000;
-    private static final int MAX_ROOM_USER = 6;
     private static final int MULTI_MODE_EXP_WEIGHT = 10;
     private static final String SPACE = " ";
 
@@ -50,6 +49,8 @@ public class GameRoom {
 
     //선택한 연도
     private String year;
+
+    private int maxUserNumber;
 
     private String roomManagerNickname;
 
@@ -184,7 +185,7 @@ public class GameRoom {
             throw new MultiModeException(MultiModeExceptionInfo.ALREADY_STARTED_ROOM);
         }
 
-        if (totalUsers == MAX_ROOM_USER) {
+        if (totalUsers == this.maxUserNumber) {
             throw new MultiModeException(MultiModeExceptionInfo.FULL_ROOM_USER);
         }
 

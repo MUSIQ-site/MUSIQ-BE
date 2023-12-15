@@ -19,5 +19,6 @@ public class CreateGameRoomRequestDto {
     private String roomName;
     private String password;
     private String musicYear;
+    private int maxUserNumber;
     private int quizAmount;
 }

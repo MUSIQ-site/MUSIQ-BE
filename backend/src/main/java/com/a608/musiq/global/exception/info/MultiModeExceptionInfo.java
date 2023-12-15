@@ -11,7 +11,8 @@ public enum MultiModeExceptionInfo {
     ALREADY_STARTED_ROOM(HttpStatus.BAD_REQUEST, 1603, "이미 시작한 방입니다."),
     WRONG_PASSWORD(HttpStatus.BAD_REQUEST, 1604, "비밀번호가 일치하지 않습니다."),
     NOT_FOUND_MULTI_MODE_CREATE_GAME_ROOM_LOG(HttpStatus.BAD_REQUEST, 1605, "멀티모드 게임방 생성 로그를 찾을 수 없습니다."),
-    NOT_FOUND_MULTI_MODE_GAME_START_LOG(HttpStatus.BAD_REQUEST, 1606, "멀티모드 게임 시작 로그를 찾을 수 없습니다.");
+    NOT_FOUND_MULTI_MODE_GAME_START_LOG(HttpStatus.BAD_REQUEST, 1606, "멀티모드 게임 시작 로그를 찾을 수 없습니다."),
+    INVALID_MAX_USER_NUMBER(HttpStatus.BAD_REQUEST, 1607, "최대 인원수가 유효하지 않습니다.");
 
     private final HttpStatus status;
     private final Integer code;

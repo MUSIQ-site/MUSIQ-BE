@@ -41,6 +41,10 @@ public class MultiModeCreateGameRoomLog {
 
 	@NotNull
 	@Column
+	private int maxUserNumber;
+
+	@NotNull
+	@Column
 	private Boolean isStarted;
 
 	@NotNull

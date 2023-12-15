@@ -2,11 +2,7 @@ package com.a608.musiq.domain.websocket.service;
 
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
-import com.a608.musiq.domain.websocket.data.GameRoomType;
-import com.a608.musiq.domain.websocket.data.GameValue;
-import com.a608.musiq.domain.websocket.data.MessageDtoType;
-import com.a608.musiq.domain.websocket.data.MessageType;
-import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.domain.websocket.data.*;
 import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
@@ -549,6 +545,9 @@ public class GameService {
 		userInfoItems.put(uuid,
 			UserInfoItem.builder().nickname(memberInfo.getNickname()).score(0.0)
 				.isSkipped(false).build());
+
+		validateMaxUserNumber(createGameRoomRequestDto.getMaxUserNumber());
+
 		GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
 			.roomName(createGameRoomRequestDto.getRoomName())
 			.password(createGameRoomRequestDto.getPassword())
@@ -557,6 +556,7 @@ public class GameService {
 			.roomManagerNickname(memberInfo.getNickname())
 			.numberOfProblems(createGameRoomRequestDto.getQuizAmount())
 			.year(createGameRoomRequestDto.getMusicYear())
+			.maxUserNumber(createGameRoomRequestDto.getMaxUserNumber())
 			.totalUsers(0)
 			.gameRoomType(GameRoomType.WAITING)
 			.userInfoItems(userInfoItems).build();
@@ -692,6 +692,7 @@ public class GameService {
 		return multiModeCreateGameRoomLogRepository.save(MultiModeCreateGameRoomLog.builder()
 				.title(createGameRoomRequestDto.getRoomName())
 				.years(createGameRoomRequestDto.getMusicYear())
+				.maxUserNumber(createGameRoomRequestDto.getMaxUserNumber())
 				.roomManagerNickname(nickname)
 				.password(createGameRoomRequestDto.getPassword())
 				.isStarted(Boolean.FALSE)
@@ -791,6 +792,13 @@ public class GameService {
 		return multiModeGameStartLogRepository.findLatestStartedAtByMultiModeCreateGameRoomLogId(
 				gameOverRequestDto.getMultiModeCreateGameRoomLogId())
 			.orElseThrow(() -> new MultiModeException(MultiModeExceptionInfo.NOT_FOUND_MULTI_MODE_GAME_START_LOG));
+	}
+
+	private void validateMaxUserNumber(int maxUserNumber) {
+		if (GameRoomUserNumber.MINIMUM_USER_NUMBER.getValue() > maxUserNumber
+			|| GameRoomUserNumber.MAX_USER_NUMBER.getValue() < maxUserNumber) {
+			throw new MultiModeException(MultiModeExceptionInfo.INVALID_MAX_USER_NUMBER);
+		}
 	}
 
 }
