@@ -10,6 +10,7 @@ public class GameRoomListResponseItem {
     private int gameRoomNo;
     private String roomTitle;
     private String roomManager;
+    private int maxUserNumber;
     private int currentMembers;
     private int currentRound;
     private int quizAmount;
