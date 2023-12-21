@@ -558,6 +558,7 @@ public class GameService {
 			.numberOfProblems(createGameRoomRequestDto.getQuizAmount())
 			.year(createGameRoomRequestDto.getMusicYear())
 			.maxUserNumber(6)
+//			.maxUserNumber(createGameRoomRequestDto.getMaxUserNumber())
 			.totalUsers(0)
 			.gameRoomType(GameRoomType.WAITING)
 			.userInfoItems(userInfoItems).build();
@@ -695,6 +696,7 @@ public class GameService {
 				.years(createGameRoomRequestDto.getMusicYear())
 //				.maxUserNumber(createGameRoomRequestDto.getMaxUserNumber())
 				.maxUserNumber(6)
+				.quizAmount(createGameRoomRequestDto.getQuizAmount())
 				.roomManagerNickname(nickname)
 				.password(createGameRoomRequestDto.getPassword())
 				.isStarted(Boolean.FALSE)
