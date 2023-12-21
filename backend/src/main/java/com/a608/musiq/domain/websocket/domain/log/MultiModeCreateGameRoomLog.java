@@ -45,6 +45,10 @@ public class MultiModeCreateGameRoomLog {
 
 	@NotNull
 	@Column
+	private int quizAmount;
+
+	@NotNull
+	@Column
 	private Boolean isStarted;
 
 	@NotNull
