@@ -16,9 +16,8 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtProvider {
-	// private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60L * 5L; // 엑세스 토큰 유효 시간 (5분)
-	private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60L * 60L * 24L; // 임시 엑세스 토큰 유효 시간 (24시간)
-	private static final Long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60L * 60L * 24L; // 리후레쉬 토큰 유효 시간 (24시간)
+	private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60L * 5L; // 엑세스 토큰 유효 시간 (5분)
+	private static final Long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60L * 60L * 24L * 7L; // 리후레쉬 토큰 유효 시간 (7일)
 
 	@Value("${jwt.secret-key}")
 	private String SECRET_KEY;
