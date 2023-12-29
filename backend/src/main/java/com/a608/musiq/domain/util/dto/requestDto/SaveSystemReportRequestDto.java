@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SaveSystemReportRequestDto {
 
-    private String type;
+    private ReportType type;
     private String content;
 }

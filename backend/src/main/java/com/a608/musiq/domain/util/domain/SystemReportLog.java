@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.util.domain;
 
+import com.a608.musiq.domain.util.dto.requestDto.ReportType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ public class SystemReportLog {
 
     @NotNull
     @Column
-    private String type;
+    private ReportType type;
 
     @NotNull
     @Column
