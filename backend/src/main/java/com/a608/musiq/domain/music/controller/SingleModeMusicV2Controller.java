@@ -5,6 +5,7 @@ import com.a608.musiq.domain.music.dto.responseDto.*;
 import com.a608.musiq.domain.music.dto.responseDto.v2.CheckPrevGameResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.v2.DeletePrevGameResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.v2.GameStartResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.v2.MusicPlayCheckResponseDto;
 import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 import com.a608.musiq.domain.music.service.GuestModeMusicService;
 import com.a608.musiq.domain.music.service.SingleModeMusicService;
@@ -92,6 +93,17 @@ public class SingleModeMusicV2Controller {
 				.code(HttpStatus.OK.value())
 				.data(musicService.startNewGame(CreateRoomRequestServiceDto.from(difficulty, year, token)))
 				.build());
+	}
+
+	@GetMapping("/listencheck")
+	private ResponseEntity<BaseResponse<MusicPlayCheckResponseDto>> checkMusicPlay(
+			@RequestHeader("accessToken") String token
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(BaseResponse.<MusicPlayCheckResponseDto>builder()
+						.code(HttpStatus.OK.value())
+						.data(musicService.checkMusicPlay(token))
+						.build());
 	}
 
 	/**
