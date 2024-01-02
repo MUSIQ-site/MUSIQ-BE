@@ -65,4 +65,8 @@ public class SingleGameRoom {
 		this.round = round + 1;
 	}
 
+	public void minusListenNum() {
+		this.listenNum--;
+	}
+
 }

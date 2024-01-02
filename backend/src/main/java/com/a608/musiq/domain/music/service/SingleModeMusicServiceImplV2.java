@@ -10,6 +10,7 @@ import com.a608.musiq.domain.music.dto.responseDto.*;
 import com.a608.musiq.domain.music.dto.responseDto.v2.CheckPrevGameResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.v2.DeletePrevGameResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.v2.GameStartResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.v2.MusicPlayCheckResponseDto;
 import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.SingleModeLogRepository;
@@ -259,8 +260,37 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	}
 
 	/**
-	 * 게임 끝 로직
+	 * 노래 재생 가능 여부 확인
 	 * 
+	 * @param token
+	 * @return MusicPlayCheckResponseDto
+	 */
+	@Override
+	public MusicPlayCheckResponseDto checkMusicPlay(String token) {
+		UUID memberId = jwtValidator.getData(token);
+
+		// 현재 진행 중인 게임이 있는지 Map에서 확인
+		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
+
+		if(isExist) {
+			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
+			// 듣기 횟수가 남아 있지 않다면
+			if(room.getListenNum() == 0) {
+				return MusicPlayCheckResponseDto.from(false, 0);
+			}
+			// 듣기 횟수가 남아 있다면
+			else {
+				room.minusListenNum();
+				return MusicPlayCheckResponseDto.from(true, room.getListenNum());
+			}
+		} else {
+			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
+		}
+	}
+
+	/**
+	 * 게임 끝 로직
+	 *
 	 * @param room
 	 */
 	@Transactional
