@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("guestModeMusicServiceImpl")
 @RequiredArgsConstructor
-public class GuestModeMusicServiceImpl implements MusicService {
+public class GuestModeMusicServiceImpl implements GuestModeMusicService {
 	private static final String SPACE = " ";
 	private static final String EMPTY_STRING = "";
 	private static final int EMPTY_LIST_SIZE = 0;

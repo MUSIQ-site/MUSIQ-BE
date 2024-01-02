@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.a608.musiq.domain.music.service.MusicService;
+import com.a608.musiq.domain.music.service.GuestModeMusicService;
 
 @RestController
 @RequestMapping("/music/guest")
 public class GuestModeMusicController {
 
-	private final MusicService musicService;
+	private final GuestModeMusicService musicService;
 
 	@Autowired
-	public GuestModeMusicController(@Qualifier("guestModeMusicServiceImpl") MusicService musicService) {
+	public GuestModeMusicController(@Qualifier("guestModeMusicServiceImpl") GuestModeMusicService musicService) {
 		this.musicService = musicService;
 	}
 

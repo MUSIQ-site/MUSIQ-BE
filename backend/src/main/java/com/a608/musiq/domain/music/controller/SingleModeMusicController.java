@@ -24,16 +24,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
-import com.a608.musiq.domain.music.service.MusicService;
+import com.a608.musiq.domain.music.service.GuestModeMusicService;
 
 @RestController
 @RequestMapping("/music/single")
 public class SingleModeMusicController {
 
-	private final MusicService musicService;
+	private final GuestModeMusicService musicService;
 
 	@Autowired
-	public SingleModeMusicController(@Qualifier("singleModeMusicServiceImpl") MusicService musicService) {
+	public SingleModeMusicController(@Qualifier("singleModeMusicServiceImpl") GuestModeMusicService musicService) {
 		this.musicService = musicService;
 	}
 
