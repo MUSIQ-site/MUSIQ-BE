@@ -92,6 +92,12 @@ public class SingleModeMusicV2Controller {
 				.build());
 	}
 
+	/**
+	 * 재생 가능 여부 확인
+	 * 
+	 * @param token
+	 * @return
+	 */
 	@GetMapping("/listencheck")
 	private ResponseEntity<BaseResponse<MusicPlayCheckResponseDto>> checkMusicPlay(
 			@RequestHeader("accessToken") String token
@@ -103,6 +109,13 @@ public class SingleModeMusicV2Controller {
 						.build());
 	}
 
+	/**
+	 * 정답 채점
+	 * 
+	 * @param token
+	 * @param answer
+	 * @return
+	 */
 	@GetMapping("/answercheck")
 	private ResponseEntity<BaseResponse<CheckAnswerResponseDto>> checkMusicAnswer(
 			@RequestHeader("accessToken") String token,
