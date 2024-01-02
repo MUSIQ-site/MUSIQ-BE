@@ -2,10 +2,7 @@ package com.a608.musiq.domain.music.service;
 
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.*;
-import com.a608.musiq.domain.music.dto.responseDto.v2.CheckPrevGameResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.v2.DeletePrevGameResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.v2.GameStartResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.v2.MusicPlayCheckResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.v2.*;
 import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 
 public interface SingleModeMusicService {
@@ -26,4 +23,7 @@ public interface SingleModeMusicService {
 
     // 노래 재생 가능 여부 확인
     MusicPlayCheckResponseDto checkMusicPlay(String token);
+
+    // 정답 채점
+    CheckAnswerResponseDto checkAnswer(String token, String answer);
 }

@@ -7,10 +7,7 @@ import com.a608.musiq.domain.music.domain.*;
 import com.a608.musiq.domain.music.domain.log.SingleModeLog;
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.*;
-import com.a608.musiq.domain.music.dto.responseDto.v2.CheckPrevGameResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.v2.DeletePrevGameResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.v2.GameStartResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.v2.MusicPlayCheckResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.v2.*;
 import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.SingleModeLogRepository;
@@ -283,6 +280,50 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 				room.minusListenNum();
 				return MusicPlayCheckResponseDto.from(true, room.getListenNum());
 			}
+		} else {
+			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
+		}
+	}
+
+	@Override
+	public CheckAnswerResponseDto checkAnswer(String token, String answer) {
+		UUID memberId = jwtValidator.getData(token);
+
+		// 현재 진행 중인 게임이 있는지 Map에서 확인
+		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
+
+		// 진행 중인 게임이 있다면
+		if(isExist) {
+			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
+
+			// 정답을 맞췄거나 시도횟수를 모두 사용하여 라운드가 끝난 상태이면 더 시도할 수 X
+			if(room.getIsRoundEnded())
+				throw new SingleModeException(SingleModeExceptionInfo.ENDED_ROUND);
+
+			// 현재 라운드의 음악을 뽑아냄
+			Music music = room.getMusicList().get(room.getRound()-1);
+
+			// 해당 음악의 정답들을 가져옴
+			List<Title> titles = titleRepository.findAllByMusicId(music.getId());
+
+			// 채점을 위해 소문자로 변환, 공백을 제거
+			answer = answer.toLowerCase().replaceAll(SPACE, EMPTY_STRING);
+
+			// 정답 제목을 하나씩 돌면서 비교
+			for(Title title : titles) {
+				String musicTitle = title.getAnswer().toLowerCase().replaceAll(SPACE, EMPTY_STRING);
+
+				// 일치하는 정답이 있는 경우
+				if(answer.equals(musicTitle)) {
+					room.roundEnd();
+					return CheckAnswerResponseDto.from(true, room.getIsRoundEnded(), room.getTryNum());
+				}
+			}
+
+			// 일치하는 정답이 없는 경우
+			room.minusTryNum();
+			return CheckAnswerResponseDto.from(false, room.getIsRoundEnded(), room.getTryNum());
+
 		} else {
 			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
 		}
