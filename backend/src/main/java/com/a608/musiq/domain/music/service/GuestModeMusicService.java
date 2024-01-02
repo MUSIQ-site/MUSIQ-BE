@@ -4,7 +4,7 @@ import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.*;
 import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 
-public interface MusicService {
+public interface GuestModeMusicService {
 	CreateRoomResponseDto createRoom(CreateRoomRequestServiceDto createRoomRequestServiceDto);
 
 	AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto);

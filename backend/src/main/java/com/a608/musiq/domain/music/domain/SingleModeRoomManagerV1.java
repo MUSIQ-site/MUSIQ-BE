@@ -6,10 +6,10 @@ import java.util.Map;
 import lombok.Getter;
 
 @Getter
-public class SingleModeRoomManager {
+public class SingleModeRoomManagerV1 {
 	private Map<Integer, Room> rooms;
 
-	public SingleModeRoomManager() {
+	public SingleModeRoomManagerV1() {
 		this.rooms = new HashMap<>();
 	}
 

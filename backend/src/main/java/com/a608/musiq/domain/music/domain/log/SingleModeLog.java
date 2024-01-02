@@ -89,6 +89,6 @@ public class SingleModeLog {
 	}
 
 	private void calculatePlayTime() {
-		this.playTime = (int)Duration.between(startedAt, endedAt).getSeconds();
+		this.playTime = (int)(Math.min(Integer.MAX_VALUE, Duration.between(startedAt, endedAt).getSeconds()));
 	}
 }

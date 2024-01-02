@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.music.service;
 
+import com.a608.musiq.domain.music.domain.*;
 import com.a608.musiq.global.Util;
 import com.a608.musiq.global.Util.RedisKey;
 import java.util.ArrayList;
@@ -16,10 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.music.data.Difficulty;
-import com.a608.musiq.domain.music.domain.Music;
-import com.a608.musiq.domain.music.domain.Room;
-import com.a608.musiq.domain.music.domain.SingleModeRoomManager;
-import com.a608.musiq.domain.music.domain.Title;
 import com.a608.musiq.domain.music.domain.log.SingleModeLog;
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
@@ -45,7 +42,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service("singleModeMusicServiceImpl")
 @RequiredArgsConstructor
-public class SingleModeMusicServiceImpl implements MusicService {
+public class SingleModeMusicServiceImplV1 implements GuestModeMusicService {
 	private static final String SPACE = " ";
 	private static final String EMPTY_STRING = "";
 	private static final int EMPTY_LIST_SIZE = 0;
@@ -55,7 +52,7 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	private static final int HARD_MODE_EXP_WEIGHT = 3;
 	private static final int CRAZY_MODE_EXP_WEIGHT = 4;
 
-	private final SingleModeRoomManager singleModeRoomManager = new SingleModeRoomManager();
+	private final SingleModeRoomManagerV1 singleModeRoomManager = new SingleModeRoomManagerV1();
 
 	private final MemberInfoRepository memberInfoRepository;
 	private final MusicRepository musicRepository;
@@ -119,6 +116,7 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	 *
 	 * @param roomId
 	 * @param round
+	 * @see GetProblemsResponseDto
 	 * @see GetProblemsResponseDto
 	 * @return GetProblemsResponseDto
 	 */
