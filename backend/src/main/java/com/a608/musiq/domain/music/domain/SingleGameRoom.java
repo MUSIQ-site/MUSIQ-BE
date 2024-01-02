@@ -16,6 +16,7 @@ public class SingleGameRoom {
 	private static final int LISTEN_NUM_START_NUMBER = 3;
 	private static final int LIFE_START_NUMBER = 3;
 	private static final boolean IS_ROUND_ENDED_START = false;
+	private static final int ROUND_OVER_TRY_NUM = 0;
 
 	// 게임 방 ID
 	private Integer roomId;
@@ -71,7 +72,7 @@ public class SingleGameRoom {
 
 	public void minusTryNum() {
 		this.tryNum--;
-		if(this.tryNum == 0) {
+		if(this.tryNum == ROUND_OVER_TRY_NUM) {
 			this.isRoundEnded = true;
 			this.life--;
 		}

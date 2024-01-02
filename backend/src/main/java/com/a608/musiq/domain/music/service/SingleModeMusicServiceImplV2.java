@@ -34,10 +34,13 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	private static final String EMPTY_STRING = "";
 	private static final int EMPTY_LIST_SIZE = 0;
 	private static final int LOOP_START_INDEX = 0;
+	private static final int LISTEN_NUM_LIMIT = 0;
 	private static final int EASY_MODE_EXP_WEIGHT = 1;
 	private static final int NORMAL_MODE_EXP_WEIGHT = 2;
 	private static final int HARD_MODE_EXP_WEIGHT = 3;
 	private static final int CRAZY_MODE_EXP_WEIGHT = 4;
+	private static final int NUMBER_FOR_INITIALIZE = 0;
+	private static final int DIFF_NUMBER_ROUND_TO_INDEX = 1;
 
 	private final SingleModeRoomManagerV2 singleModeRoomManager = new SingleModeRoomManagerV2();
 
@@ -134,10 +137,10 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 		// 현재 memberId가 이전에 종료되지 않은 게임이 있는지 Map에서 탐색
 		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
 
-		String year = "";
-		String difficulty = "";
-		int round = 0;
-		int life = 0;
+		String year = EMPTY_STRING;
+		String difficulty = EMPTY_STRING;
+		int round = NUMBER_FOR_INITIALIZE;
+		int life = NUMBER_FOR_INITIALIZE;
 
 		// 있는 경우
 		if(isExist) {
@@ -177,10 +180,10 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 				throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
 			}
 		} catch (Exception e) {
-			return DeletePrevGameResponseDto.of(false);
+			return DeletePrevGameResponseDto.of(Boolean.FALSE);
 		}
 
-		return DeletePrevGameResponseDto.of(true);
+		return DeletePrevGameResponseDto.of(Boolean.TRUE);
 	}
 
 	/**
@@ -199,7 +202,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 		// 진행 중이었던 방이 있는 경우
 		if(isExist) {
 			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
-			String url = room.getMusicList().get(room.getRound()-1).getUrl();
+			String url = room.getMusicList().get(room.getRound()-DIFF_NUMBER_ROUND_TO_INDEX).getUrl();
 			return GameStartResponseDto.from(
 					room.getDifficulty().getValue(),
 					room.getRound(),
@@ -244,7 +247,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 		singleModeRoomManager.addRoom(memberId, room);
 
 		// 첫번째 문제의 url
-		String url = room.getMusicList().get(room.getRound()-1).getUrl();
+		String url = room.getMusicList().get(room.getRound()-DIFF_NUMBER_ROUND_TO_INDEX).getUrl();
 
 		return GameStartResponseDto.from(
 				room.getDifficulty().getValue(),
@@ -272,19 +275,26 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 		if(isExist) {
 			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
 			// 듣기 횟수가 남아 있지 않다면
-			if(room.getListenNum() == 0) {
-				return MusicPlayCheckResponseDto.from(false, 0);
+			if(room.getListenNum() == LISTEN_NUM_LIMIT) {
+				return MusicPlayCheckResponseDto.from(Boolean.FALSE, LISTEN_NUM_LIMIT);
 			}
 			// 듣기 횟수가 남아 있다면
 			else {
 				room.minusListenNum();
-				return MusicPlayCheckResponseDto.from(true, room.getListenNum());
+				return MusicPlayCheckResponseDto.from(Boolean.TRUE, room.getListenNum());
 			}
 		} else {
 			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
 		}
 	}
 
+	/**
+	 * 정답 채점
+	 *
+	 * @param token
+	 * @param answer
+	 * @return CheckAnswerResponseDto
+	 */
 	@Override
 	public CheckAnswerResponseDto checkAnswer(String token, String answer) {
 		UUID memberId = jwtValidator.getData(token);
@@ -301,7 +311,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 				throw new SingleModeException(SingleModeExceptionInfo.ENDED_ROUND);
 
 			// 현재 라운드의 음악을 뽑아냄
-			Music music = room.getMusicList().get(room.getRound()-1);
+			Music music = room.getMusicList().get(room.getRound()-DIFF_NUMBER_ROUND_TO_INDEX);
 
 			// 해당 음악의 정답들을 가져옴
 			List<Title> titles = titleRepository.findAllByMusicId(music.getId());
@@ -316,13 +326,13 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 				// 일치하는 정답이 있는 경우
 				if(answer.equals(musicTitle)) {
 					room.roundEnd();
-					return CheckAnswerResponseDto.from(true, room.getIsRoundEnded(), room.getTryNum());
+					return CheckAnswerResponseDto.from(Boolean.TRUE, room.getIsRoundEnded(), room.getTryNum());
 				}
 			}
 
 			// 일치하는 정답이 없는 경우
 			room.minusTryNum();
-			return CheckAnswerResponseDto.from(false, room.getIsRoundEnded(), room.getTryNum());
+			return CheckAnswerResponseDto.from(Boolean.FALSE, room.getIsRoundEnded(), room.getTryNum());
 
 		} else {
 			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
