@@ -2,10 +2,7 @@ package com.a608.musiq.domain.music.controller;
 
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.*;
-import com.a608.musiq.domain.music.dto.responseDto.v2.CheckPrevGameResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.v2.DeletePrevGameResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.v2.GameStartResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.v2.MusicPlayCheckResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.v2.*;
 import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 import com.a608.musiq.domain.music.service.GuestModeMusicService;
 import com.a608.musiq.domain.music.service.SingleModeMusicService;
@@ -103,6 +100,18 @@ public class SingleModeMusicV2Controller {
 				.body(BaseResponse.<MusicPlayCheckResponseDto>builder()
 						.code(HttpStatus.OK.value())
 						.data(musicService.checkMusicPlay(token))
+						.build());
+	}
+
+	@GetMapping("/answercheck")
+	private ResponseEntity<BaseResponse<CheckAnswerResponseDto>> checkMusicAnswer(
+			@RequestHeader("accessToken") String token,
+			@RequestParam("answer") String answer
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(BaseResponse.<CheckAnswerResponseDto>builder()
+						.code(HttpStatus.OK.value())
+						.data(musicService.checkAnswer(token, answer))
 						.build());
 	}
 

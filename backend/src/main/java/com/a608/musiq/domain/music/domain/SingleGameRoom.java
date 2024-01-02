@@ -69,4 +69,16 @@ public class SingleGameRoom {
 		this.listenNum--;
 	}
 
+	public void minusTryNum() {
+		this.tryNum--;
+		if(this.tryNum == 0) {
+			this.isRoundEnded = true;
+			this.life--;
+		}
+	}
+
+	public void roundEnd() {
+		this.isRoundEnded = true;
+	}
+
 }

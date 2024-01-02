@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Getter
 public enum SingleModeExceptionInfo {
-	NOT_FOUND_LOG(HttpStatus.NOT_FOUND, 1500, "게임방을 찾을 수 없습니다.");
+	NOT_FOUND_LOG(HttpStatus.NOT_FOUND, 1500, "게임방을 찾을 수 없습니다."),
+	ENDED_ROUND(HttpStatus.NOT_ACCEPTABLE, 1501, "종료된 라운드입니다.");
 
 	private final HttpStatus status;
 	private final Integer code;
