@@ -26,4 +26,7 @@ public interface SingleModeMusicService {
 
     // 정답 채점
     CheckAnswerResponseDto checkAnswer(String token, String answer);
+
+    // 스킵
+    SingleSkipResponseDto skipRound(String token);
 }
