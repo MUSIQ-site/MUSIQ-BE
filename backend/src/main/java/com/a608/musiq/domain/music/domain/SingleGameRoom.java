@@ -70,6 +70,10 @@ public class SingleGameRoom {
 		this.listenNum--;
 	}
 
+	public void minusLife() {
+		this.life--;
+	}
+
 	public void minusTryNum() {
 		this.tryNum--;
 		if(this.tryNum == ROUND_OVER_TRY_NUM) {

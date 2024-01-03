@@ -340,6 +340,37 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	}
 
 	/**
+	 * 라운드 스킵
+	 *
+	 * @param token
+	 * @return SingleSkipResponseDto
+	 */
+	@Override
+	public SingleSkipResponseDto skipRound(String token) {
+		UUID memberId = jwtValidator.getData(token);
+
+		// 현재 진행 중인 게임이 있는지 Map에서 확인
+		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
+
+		try {
+			// 존재한다면
+			if(isExist) {
+				SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
+				// 라운드의 상태를 종료 상태로 바꾸고
+				room.roundEnd();
+				// 목숨 - 1
+				room.minusLife();
+				return SingleSkipResponseDto.of(Boolean.TRUE);
+			}
+			else {
+				throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
+			}
+		} catch(Exception e) {
+			return SingleSkipResponseDto.of(Boolean.FALSE);
+		}
+	}
+
+	/**
 	 * 게임 끝 로직
 	 *
 	 * @param room

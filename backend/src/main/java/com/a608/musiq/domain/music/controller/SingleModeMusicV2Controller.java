@@ -129,6 +129,23 @@ public class SingleModeMusicV2Controller {
 	}
 
 	/**
+	 * 라운드 스킵
+	 *
+	 * @param token
+	 * @return
+	 */
+	@PatchMapping("/skip")
+	private ResponseEntity<BaseResponse<SingleSkipResponseDto>> skipCurrentRound(
+			@RequestHeader("accessToken") String token
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(BaseResponse.<SingleSkipResponseDto>builder()
+						.code(HttpStatus.OK.value())
+						.data(musicService.skipRound(token))
+						.build());
+	}
+
+	/**
 	 * 로그에 ip 추가
 	 *
 	 * @param addIpInLogRequestDto
