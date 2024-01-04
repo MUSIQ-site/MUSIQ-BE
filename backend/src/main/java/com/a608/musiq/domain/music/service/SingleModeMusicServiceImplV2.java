@@ -227,11 +227,19 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	@Override
 	@Transactional
 	public GameStartResponseDto startNewGame(CreateRoomRequestServiceDto createRoomRequestServiceDto) {
+		UUID memberId = jwtValidator.getData(createRoomRequestServiceDto.getToken());
+
+		// 현재 진행 중인 게임이 있는지 Map에서 확인
+		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
+		if(isExist) {
+			SingleGameRoom pastRoom = singleModeRoomManager.getRooms().get(memberId);
+			gameEnd(pastRoom);
+			singleModeRoomManager.getRooms().remove(memberId);
+		}
+
 		String year = createRoomRequestServiceDto.getYear();
 		StringTokenizer stringTokenizer = new StringTokenizer(year, SPACE);
 		Difficulty difficultyType = Difficulty.valueOf(createRoomRequestServiceDto.getDifficulty().toUpperCase());
-
-		UUID memberId = jwtValidator.getData(createRoomRequestServiceDto.getToken());
 
 		String nickname = memberInfoRepository.findNicknameById(memberId)
 			.orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
@@ -352,21 +360,61 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 		// 현재 진행 중인 게임이 있는지 Map에서 확인
 		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
 
-		try {
-			// 존재한다면
-			if(isExist) {
-				SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
-				// 라운드의 상태를 종료 상태로 바꾸고
+		// 존재한다면
+		if(isExist) {
+			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
+
+			// 이미 라운드가 종료된 상태라면 중복으로 처리 X
+			if(room.getIsRoundEnded()) {
+				return SingleSkipResponseDto.of(Boolean.FALSE);
+			}
+
+			// 라운드의 상태를 종료 상태로 바꾸고
+			room.roundEnd();
+			// 목숨 - 1
+			room.minusLife();
+			return SingleSkipResponseDto.of(Boolean.TRUE);
+		}
+		else {
+			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
+		}
+	}
+
+	/**
+	 * 현재 라운드 종료
+	 *
+	 * @param token
+	 * @return SingleRoundEndResponseDto
+	 */
+	@Override
+	public SingleRoundEndResponseDto endRound(String token) {
+		UUID memberId = jwtValidator.getData(token);
+
+		// 현재 진행 중인 게임이 있는지 Map에서 확인
+		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
+
+		if(isExist) {
+			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
+			boolean isRoundEnd = room.getIsRoundEnded();
+
+			// 만약 라운드가 종료되지 않은 상태에서 호출되었다면 라운드를 종료시킴
+			if(!isRoundEnd) {
 				room.roundEnd();
-				// 목숨 - 1
 				room.minusLife();
-				return SingleSkipResponseDto.of(Boolean.TRUE);
 			}
-			else {
-				throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
-			}
-		} catch(Exception e) {
-			return SingleSkipResponseDto.of(Boolean.FALSE);
+
+			// 현재 문제
+			Music music = room.getMusicList().get(room.getRound()-DIFF_NUMBER_ROUND_TO_INDEX);
+
+			return SingleRoundEndResponseDto.from(
+					music.getTitle(),
+					music.getSinger(),
+					room.getRound(),
+					room.getLife()
+			);
+		}
+		else {
+			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
 		}
 	}
 
