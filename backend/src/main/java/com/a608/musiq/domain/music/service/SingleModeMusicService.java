@@ -29,4 +29,7 @@ public interface SingleModeMusicService {
 
     // 스킵
     SingleSkipResponseDto skipRound(String token);
+
+    // 라운드 종료
+    SingleRoundEndResponseDto endRound(String token);
 }

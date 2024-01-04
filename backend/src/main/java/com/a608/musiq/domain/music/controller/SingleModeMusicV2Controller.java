@@ -145,6 +145,24 @@ public class SingleModeMusicV2Controller {
 						.build());
 	}
 
+
+	/**
+	 * 현재 라운드 종료
+	 * 
+	 * @param token
+	 * @return
+	 */
+	@GetMapping("/roundend")
+	private ResponseEntity<BaseResponse<SingleRoundEndResponseDto>> endCurrentRound(
+			@RequestHeader("accessToken") String token
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(BaseResponse.<SingleRoundEndResponseDto>builder()
+						.code(HttpStatus.OK.value())
+						.data(musicService.endRound(token))
+						.build());
+	}
+
 	/**
 	 * 로그에 ip 추가
 	 *
