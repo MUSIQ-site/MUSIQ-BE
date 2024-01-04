@@ -365,8 +365,9 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
 
 			// 이미 라운드가 종료된 상태라면 중복으로 처리 X
+			// 종료된 방 안내 예외 발생
 			if(room.getIsRoundEnded()) {
-				return SingleSkipResponseDto.of(Boolean.FALSE);
+				throw new SingleModeException(SingleModeExceptionInfo.ENDED_ROUND);
 			}
 
 			// 라운드의 상태를 종료 상태로 바꾸고
@@ -397,10 +398,9 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
 			boolean isRoundEnd = room.getIsRoundEnded();
 
-			// 만약 라운드가 종료되지 않은 상태에서 호출되었다면 라운드를 종료시킴
+			// 만약 라운드가 종료되지 않은 상태에서 호출되었다면 로직 수행 X
 			if(!isRoundEnd) {
-				room.roundEnd();
-				room.minusLife();
+				throw new SingleModeException(SingleModeExceptionInfo.ONGOING_ROUND);
 			}
 
 			// 현재 문제
