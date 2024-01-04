@@ -178,6 +178,23 @@ public class SingleModeMusicV2Controller {
 	}
 
 	/**
+	 * 게임 종료
+	 * 
+	 * @param token
+	 * @return
+	 */
+	@DeleteMapping("/gameover")
+	private ResponseEntity<BaseResponse<SingleGameOverResponseDto>> gameOverCurrentGame (
+			@RequestHeader("accessToken") String token
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(BaseResponse.<SingleGameOverResponseDto>builder()
+						.code(HttpStatus.OK.value())
+						.data(musicService.gameOver(token))
+						.build());
+	}
+
+	/**
 	 * 로그에 ip 추가
 	 *
 	 * @param addIpInLogRequestDto
