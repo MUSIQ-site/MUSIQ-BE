@@ -37,18 +37,17 @@ public class MultiModeModifyGameRoomInformationLog {
 
     @NotNull
     @Column
-    private String changedTitle;
+    private String modifiedTitle;
 
     @NotNull
     @Column
-    private String changedYear;
+    private String modifiedYear;
 
     @NotNull
     @Column
-    private int changedQuizAMount;
+    private int modifiedQuizAMount;
 
     @NotNull
     @Column
-    private int changedMaxUserNumber;
-
+    private int modifiedMaxUserNumber;
 }
