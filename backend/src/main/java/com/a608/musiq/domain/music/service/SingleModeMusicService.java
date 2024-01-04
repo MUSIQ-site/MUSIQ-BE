@@ -16,10 +16,10 @@ public interface SingleModeMusicService {
     DeletePrevGameResponseDto deletePrevGame(String token);
 
     // 진행 중인 게임 이어하기
-    GameStartResponseDto resumePrevGame(String token);
+    RoundInfoResponseDto resumePrevGame(String token);
 
     // 새로운 게임 시작하기
-    GameStartResponseDto startNewGame(CreateRoomRequestServiceDto createRoomRequestServiceDto);
+    RoundInfoResponseDto startNewGame(CreateRoomRequestServiceDto createRoomRequestServiceDto);
 
     // 노래 재생 가능 여부 확인
     MusicPlayCheckResponseDto checkMusicPlay(String token);
@@ -32,4 +32,7 @@ public interface SingleModeMusicService {
 
     // 라운드 종료
     SingleRoundEndResponseDto endRound(String token);
+
+    // 다음 라운드
+    RoundInfoResponseDto nextRound(String token);
 }

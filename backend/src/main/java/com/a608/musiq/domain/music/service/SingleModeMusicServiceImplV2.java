@@ -193,7 +193,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	 * @return GameStartResponseDto
 	 */
 	@Override
-	public GameStartResponseDto resumePrevGame(String token) {
+	public RoundInfoResponseDto resumePrevGame(String token) {
 		UUID memberId = jwtValidator.getData(token);
 
 		// 현재 memberId가 이전에 종료되지 않은 게임이 있는지 Map에서 탐색
@@ -203,7 +203,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 		if(isExist) {
 			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
 			String url = room.getMusicList().get(room.getRound()-DIFF_NUMBER_ROUND_TO_INDEX).getUrl();
-			return GameStartResponseDto.from(
+			return RoundInfoResponseDto.from(
 					room.getDifficulty().getValue(),
 					room.getRound(),
 					room.getLife(),
@@ -226,7 +226,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	 */
 	@Override
 	@Transactional
-	public GameStartResponseDto startNewGame(CreateRoomRequestServiceDto createRoomRequestServiceDto) {
+	public RoundInfoResponseDto startNewGame(CreateRoomRequestServiceDto createRoomRequestServiceDto) {
 		UUID memberId = jwtValidator.getData(createRoomRequestServiceDto.getToken());
 
 		// 현재 진행 중인 게임이 있는지 Map에서 확인
@@ -257,7 +257,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 		// 첫번째 문제의 url
 		String url = room.getMusicList().get(room.getRound()-DIFF_NUMBER_ROUND_TO_INDEX).getUrl();
 
-		return GameStartResponseDto.from(
+		return RoundInfoResponseDto.from(
 				room.getDifficulty().getValue(),
 				room.getRound(),
 				room.getLife(),
@@ -403,6 +403,11 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 				throw new SingleModeException(SingleModeExceptionInfo.ONGOING_ROUND);
 			}
 
+			// 전체 게임 종료 여부
+			boolean isGameOver = false;
+			if(room.getLife() == 0 || room.getRound() == room.getMusicList().size())
+				isGameOver = true;
+
 			// 현재 문제
 			Music music = room.getMusicList().get(room.getRound()-DIFF_NUMBER_ROUND_TO_INDEX);
 
@@ -410,7 +415,55 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 					music.getTitle(),
 					music.getSinger(),
 					room.getRound(),
-					room.getLife()
+					room.getLife(),
+					isGameOver
+			);
+		}
+		else {
+			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
+		}
+	}
+
+	/**
+	 * 다음 라운드
+	 *
+	 * @param token
+	 * @return
+	 */
+	@Override
+	public RoundInfoResponseDto nextRound(String token) {
+		UUID memberId = jwtValidator.getData(token);
+
+		// 현재 진행 중인 게임이 있는지 Map에서 확인
+		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
+
+		if(isExist) {
+			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
+			boolean isRoundEnd = room.getIsRoundEnded();
+
+			// 만약 라운드가 종료되지 않은 상태에서 호출되었다면 로직 수행 X
+			if(!isRoundEnd) {
+				throw new SingleModeException(SingleModeExceptionInfo.ONGOING_ROUND);
+			}
+
+			// 만약 목숨이 0이거나 마지막 곡이라면 더이상 진행할 수 없으므로 예외 throw
+			if(room.getLife() == 0 || room.getRound() == room.getMusicList().size())
+				throw new SingleModeException(SingleModeExceptionInfo.GAME_OVER);
+
+			// 다음 라운드를 위한 변수 초기화
+			// 라운드+1, 듣기횟수 3, 시도횟수 3, 문제종료여부 false
+			room.goNextRound();
+
+			// 다음 문제
+			Music music = room.getMusicList().get(room.getRound()-DIFF_NUMBER_ROUND_TO_INDEX);
+
+			return RoundInfoResponseDto.from(
+					room.getDifficulty().getValue(),
+					room.getRound(),
+					room.getLife(),
+					room.getTryNum(),
+					room.getListenNum(),
+					music.getUrl()
 			);
 		}
 		else {

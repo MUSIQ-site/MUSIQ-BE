@@ -4,12 +4,9 @@ import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.*;
 import com.a608.musiq.domain.music.dto.responseDto.v2.*;
 import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
-import com.a608.musiq.domain.music.service.GuestModeMusicService;
 import com.a608.musiq.domain.music.service.SingleModeMusicService;
 import com.a608.musiq.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,11 +59,11 @@ public class SingleModeMusicV2Controller {
 	 * @return
 	 */
 	@GetMapping("/resumption")
-	private ResponseEntity<BaseResponse<GameStartResponseDto>> ResumePrevGameRoom(
+	private ResponseEntity<BaseResponse<RoundInfoResponseDto>> ResumePrevGameRoom(
 			@RequestHeader("accessToken") String token
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(BaseResponse.<GameStartResponseDto>builder()
+				.body(BaseResponse.<RoundInfoResponseDto>builder()
 						.code(HttpStatus.OK.value())
 						.data(musicService.resumePrevGame(token))
 						.build());
@@ -80,13 +77,13 @@ public class SingleModeMusicV2Controller {
 	 * @return
 	 */
 	@PostMapping("/room")
-	private ResponseEntity<BaseResponse<GameStartResponseDto>> createRoom(
+	private ResponseEntity<BaseResponse<RoundInfoResponseDto>> createRoom(
 		@RequestParam("difficulty") String difficulty,
 		@RequestParam("year") String year,
 		@RequestHeader("accessToken") String token
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(BaseResponse.<GameStartResponseDto>builder()
+			.body(BaseResponse.<RoundInfoResponseDto>builder()
 				.code(HttpStatus.OK.value())
 				.data(musicService.startNewGame(CreateRoomRequestServiceDto.from(difficulty, year, token)))
 				.build());
@@ -160,6 +157,23 @@ public class SingleModeMusicV2Controller {
 				.body(BaseResponse.<SingleRoundEndResponseDto>builder()
 						.code(HttpStatus.OK.value())
 						.data(musicService.endRound(token))
+						.build());
+	}
+
+	/**
+	 * 다음 라운드 정보 받기
+	 *
+	 * @param token
+	 * @return
+	 */
+	@GetMapping("/nextround")
+	private ResponseEntity<BaseResponse<RoundInfoResponseDto>> goNextRound(
+			@RequestHeader("accessToken") String token
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(BaseResponse.<RoundInfoResponseDto>builder()
+						.code(HttpStatus.OK.value())
+						.data(musicService.nextRound(token))
 						.build());
 	}
 
