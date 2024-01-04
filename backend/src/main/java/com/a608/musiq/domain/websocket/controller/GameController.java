@@ -1,22 +1,8 @@
 package com.a608.musiq.domain.websocket.controller;
 
-import com.a608.musiq.domain.websocket.dto.requestDto.CheckPasswordRequestDto;
-import com.a608.musiq.domain.websocket.dto.requestDto.ExitGameRoomRequestDto;
-import com.a608.musiq.domain.websocket.dto.requestDto.GameOverRequestDto;
-import com.a608.musiq.domain.websocket.dto.requestDto.GameStartRequestDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.DisconnectSocketResponseDto;
-import com.a608.musiq.domain.websocket.dto.requestDto.EnterGameRoomRequestDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.ExitGameRoomResponse;
-import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.AllChannelSizeResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.*;
+import com.a608.musiq.domain.websocket.dto.responseDto.*;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
-import com.a608.musiq.domain.websocket.dto.requestDto.CreateGameRoomRequestDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.CreateGameRoomResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.GameOverResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.GameStartResponseDto;
 import com.a608.musiq.domain.websocket.service.GameService;
 import com.a608.musiq.global.common.response.BaseResponse;
 
@@ -231,5 +217,22 @@ public class GameController {
 				.build());
 	}
 
-
+	/**
+	 * 게임 방 정보 변경
+	 *
+	 * @param accessToken
+	 * @param modifyGameRoomInformationRequestDto
+	 * @return
+	 */
+	@PatchMapping("/main/modify")
+	private ResponseEntity<BaseResponse<ModifyGameRoomInformationResponseDto>> modifyGameRoomInformation(
+			@RequestHeader("accessToken") String accessToken,
+			@RequestBody ModifyGameRoomInformationRequestDto modifyGameRoomInformationRequestDto
+			) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(BaseResponse.<ModifyGameRoomInformationResponseDto>builder()
+					.code(HttpStatus.OK.value())
+					.data(gameService.modifyGameRoomInformation(accessToken, modifyGameRoomInformationRequestDto))
+					.build());
+	}
 }

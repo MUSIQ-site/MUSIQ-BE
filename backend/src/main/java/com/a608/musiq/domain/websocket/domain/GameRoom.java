@@ -7,6 +7,7 @@ import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.dto.GetUserInfoItemDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberInfo;
+import com.a608.musiq.domain.websocket.dto.requestDto.ModifyGameRoomInformationRequestDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.EnterGameRoomDto;
@@ -15,7 +16,6 @@ import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,7 +36,7 @@ public class GameRoom {
     private static final String SPACE = " ";
 
     private int roomNo;
-    private String roomName;
+    private String title;
 
     private String password;
     private boolean isPrivate;
@@ -257,5 +257,19 @@ public class GameRoom {
             entry.getValue().initializeUserInfo();
             this.userInfoItems.put(entry.getKey(), entry.getValue());
         }
+    }
+
+    public boolean isNotRoomManager(UUID roomManagerUUID) {
+        if (roomManagerUUID.equals(this.roomManagerUUID)) {
+            return false;
+        }
+        return true;
+    }
+
+    public void modifyInformation(ModifyGameRoomInformationRequestDto modifyGameRoomInformationRequestDto) {
+        this.title = modifyGameRoomInformationRequestDto.getTitle();
+        this.year = modifyGameRoomInformationRequestDto.getYear();
+        this.numberOfProblems = modifyGameRoomInformationRequestDto.getQuizAmount();
+        this.maxUserNumber = modifyGameRoomInformationRequestDto.getMaxUserNumber();
     }
 }

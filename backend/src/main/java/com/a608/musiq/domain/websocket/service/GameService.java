@@ -9,44 +9,22 @@ import com.a608.musiq.domain.websocket.domain.UserInfoItem;
 import com.a608.musiq.domain.websocket.domain.log.MultiModeCreateGameRoomLog;
 import com.a608.musiq.domain.websocket.domain.log.MultiModeGameOverLog;
 import com.a608.musiq.domain.websocket.domain.log.MultiModeGameStartLog;
+import com.a608.musiq.domain.websocket.domain.log.MultiModeModifyGameRoomInformationLog;
 import com.a608.musiq.domain.websocket.dto.GetUserInfoItemDto;
-import com.a608.musiq.domain.websocket.dto.requestDto.CheckPasswordRequestDto;
-import com.a608.musiq.domain.websocket.dto.requestDto.ExitGameRoomRequestDto;
-import com.a608.musiq.domain.websocket.dto.requestDto.GameOverRequestDto;
-import com.a608.musiq.domain.websocket.dto.requestDto.GameStartRequestDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.AllChannelSizeResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseItem;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.*;
+import com.a608.musiq.domain.websocket.dto.requestDto.*;
+import com.a608.musiq.domain.websocket.dto.responseDto.*;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
-import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.GameOverResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseItem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.BeforeAnswerCorrectDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.EnterGameRoomDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomPubDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberInfo;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.ChatMessagePubDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultItem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameStartPubDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.GameStartResponseDto;
 import com.a608.musiq.domain.websocket.repository.MultiModeCreateGameRoomLogRepository;
 import com.a608.musiq.domain.websocket.repository.MultiModeGameOverLogRepository;
 import com.a608.musiq.domain.websocket.repository.MultiModeGameStartLogRepository;
+import com.a608.musiq.domain.websocket.repository.MultiModeModifyGameRoomInformationLogRepository;
 import com.a608.musiq.domain.websocket.service.subService.AfterAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.BeforeAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.CommonService;
 import com.a608.musiq.domain.websocket.service.subService.RoundStartService;
 import com.a608.musiq.global.Util;
 import com.a608.musiq.global.Util.RedisKey;
-import com.a608.musiq.domain.websocket.dto.requestDto.CreateGameRoomRequestDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.CreateGameRoomResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.DisconnectSocketResponseDto;
-import com.a608.musiq.domain.websocket.dto.responseDto.ExitGameRoomResponse;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
@@ -92,6 +70,7 @@ public class GameService {
 	private final MultiModeCreateGameRoomLogRepository multiModeCreateGameRoomLogRepository;
 	private final MultiModeGameStartLogRepository multiModeGameStartLogRepository;
 	private final MultiModeGameOverLogRepository multiModeGameOverLogRepository;
+	private final MultiModeModifyGameRoomInformationLogRepository multiModeModifyGameRoomInformationLogRepository;
 
 	private final RoundStartService roundStartService;
 	private final BeforeAnswerService beforeAnswerService;
@@ -443,7 +422,7 @@ public class GameService {
 					GameRoomPubDto dto = GameRoomPubDto.builder()
 						.memberInfos(memberInfos)
 						.roomNo(room.getRoomNo())
-						.roomName(room.getRoomName())
+						.roomName(room.getTitle())
 						.password(room.getPassword())
 						.isPrivate(room.isPrivate())
 						.numberOfProblems(room.getNumberOfProblems())
@@ -516,7 +495,7 @@ public class GameService {
 				gameRoomListResponseItems.add(
 					GameRoomListResponseItem.builder()
 						.gameRoomNo(subscribeNo)
-						.roomTitle(gameRoom.getRoomName())
+						.roomTitle(gameRoom.getTitle())
 						.roomManager(roomManager.getNickname())
 						.maxUserNumber(gameRoom.getMaxUserNumber())
 						.currentMembers(gameRoom.getTotalUsers())
@@ -550,7 +529,7 @@ public class GameService {
 //		validateMaxUserNumber(createGameRoomRequestDto.getMaxUserNumber());
 
 		GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
-			.roomName(createGameRoomRequestDto.getRoomName())
+			.title(createGameRoomRequestDto.getRoomName())
 			.password(createGameRoomRequestDto.getPassword())
 			.isPrivate(!createGameRoomRequestDto.getPassword().equals(""))
 			.roomManagerUUID(uuid)
@@ -722,7 +701,7 @@ public class GameService {
 		// 게임 시작 로그 생성
 		int multiModeCreateGameRoomLogId = multiModeGameStartLogRepository.save(MultiModeGameStartLog.builder()
 			.multiModeCreateGameRoomLogId(gameStartRequestDto.getMultiModeCreateGameRoomLogId())
-			.title(gameRoom.getRoomName())
+			.title(gameRoom.getTitle())
 			.years(gameRoom.getYear())
 			.roomManagerNickname(gameRoom.getRoomManagerNickname())
 			.nicknames(gameRoom.getNicknames())
@@ -769,14 +748,14 @@ public class GameService {
 
 		int multiModeCreateGameRoomLogId = multiModeGameOverLogRepository.save(MultiModeGameOverLog.builder()
 			.multiModeCreateGameRoomLogId(gameOverRequestDto.getMultiModeCreateGameRoomLogId())
-			.title(gameRoom.getRoomName())
+			.title(gameRoom.getTitle())
 			.years(gameRoom.getYear())
 			.nicknames(userInfoItemDto.getNicknames())
 			.exps(userInfoItemDto.getExps())
 			.endedAt(endedAt)
 			.playTime(playTime)
 			.build()).getMultiModeCreateGameRoomLogId();
-		
+
 		 // 게임방 사용자 점수 초기화
 		gameRoom.gameRoomUserScoreReset();
 
@@ -802,6 +781,78 @@ public class GameService {
 		if (GameRoomUserNumber.MINIMUM_USER_NUMBER.getValue() > maxUserNumber
 			|| GameRoomUserNumber.MAX_USER_NUMBER.getValue() < maxUserNumber) {
 			throw new MultiModeException(MultiModeExceptionInfo.INVALID_MAX_USER_NUMBER);
+		}
+	}
+
+	/**
+	 * 게임방 정보 변경
+	 *
+	 * @param accessToken
+	 * @param modifyGameRoomInformationRequestDto
+	 * @return
+	 */
+	@Transactional
+	public ModifyGameRoomInformationResponseDto modifyGameRoomInformation(
+        String accessToken,
+        ModifyGameRoomInformationRequestDto modifyGameRoomInformationRequestDto
+    ) {
+		checkPossibleToModifyGameRoomInformation(accessToken, modifyGameRoomInformationRequestDto);
+
+		GameRoom gameRoom = GameValue.getGameRooms().get(modifyGameRoomInformationRequestDto.getGameRoomNo());
+
+		// log에 변경 내용 저장
+		multiModeModifyGameRoomInformationLogRepository.save(
+			MultiModeModifyGameRoomInformationLog.builder()
+				.multiModeCreateGameRoomLogId(modifyGameRoomInformationRequestDto.getMultiModeCreateGameRoomLogId())
+				.previousTitle(gameRoom.getTitle())
+				.previousYear(gameRoom.getYear())
+				.previousQuizAmount(gameRoom.getNumberOfProblems())
+				.previousMaxUserNumber(gameRoom.getMaxUserNumber())
+				.modifiedTitle(modifyGameRoomInformationRequestDto.getTitle())
+				.modifiedYear(modifyGameRoomInformationRequestDto.getYear())
+				.modifiedQuizAMount(modifyGameRoomInformationRequestDto.getQuizAmount())
+				.modifiedMaxUserNumber(modifyGameRoomInformationRequestDto.getMaxUserNumber())
+				.build()
+		);
+
+		// 게임방에서 정보 변경
+		gameRoom.modifyInformation(modifyGameRoomInformationRequestDto);
+
+		// 퍼블리시
+		String destination = getDestination(modifyGameRoomInformationRequestDto.getGameRoomNo());
+		ModifyGameRoomInformationPubDto modifyGameRoomInformationPubDto = ModifyGameRoomInformationPubDto.builder()
+			.messageType(MessageDtoType.MODIFYINFO)
+			.title(modifyGameRoomInformationRequestDto.getTitle())
+			.year(modifyGameRoomInformationRequestDto.getYear())
+			.quizAmount(modifyGameRoomInformationRequestDto.getQuizAmount())
+			.maxUserNumber(modifyGameRoomInformationRequestDto.getMaxUserNumber())
+			.build();
+
+		messagingTemplate.convertAndSend(destination, modifyGameRoomInformationPubDto);
+
+
+		return new ModifyGameRoomInformationResponseDto();
+	}
+
+	/**
+	 * 게임방 정보 변경 가능 여부 확인
+	 *
+	 * @param accessToken
+	 * @param modifyGameRoomInformationRequestDto
+	 */
+	private void checkPossibleToModifyGameRoomInformation(
+        String accessToken,
+        ModifyGameRoomInformationRequestDto modifyGameRoomInformationRequestDto
+    ) {
+        GameRoom gameRoom = GameValue.getGameRooms().get(modifyGameRoomInformationRequestDto.getGameRoomNo());
+		UUID uuid = jwtValidator.getData(accessToken);
+
+		if (gameRoom.isNotRoomManager(uuid)) {
+			throw new MultiModeException(MultiModeExceptionInfo.NOT_ALLOWED_USER);
+		}
+
+		if (!gameRoom.getGameRoomType().equals(GameRoomType.WAITING)) {
+			throw new MultiModeException(MultiModeExceptionInfo.ALREADY_STARTED_ROOM);
 		}
 	}
 
