@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class GameStartResponseDto {
+public class RoundInfoResponseDto {
     private String difficulty;
     private Integer round;
     private Integer life;
@@ -13,8 +13,8 @@ public class GameStartResponseDto {
     private Integer listenNum;
     private String musicUrl;
 
-    public static GameStartResponseDto from(String difficulty, Integer round, Integer life, Integer tryNum, Integer listenNum, String musicUrl) {
-        return GameStartResponseDto.builder()
+    public static RoundInfoResponseDto from(String difficulty, Integer round, Integer life, Integer tryNum, Integer listenNum, String musicUrl) {
+        return RoundInfoResponseDto.builder()
                 .difficulty(difficulty)
                 .round(round)
                 .life(life)

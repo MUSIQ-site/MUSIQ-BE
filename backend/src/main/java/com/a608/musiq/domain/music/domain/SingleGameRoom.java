@@ -59,11 +59,11 @@ public class SingleGameRoom {
 			.build();
 	}
 
-	public void addRound(Integer round) {
-		if (this.round != round) {
-			throw new MusicException(MusicExceptionInfo.INVALID_ROUND);
-		}
-		this.round = round + 1;
+	public void goNextRound() {
+		this.round++;
+		this.listenNum = LISTEN_NUM_START_NUMBER;
+		this.tryNum = TRY_NUM_START_NUMBER;
+		isRoundEnded = IS_ROUND_ENDED_START;
 	}
 
 	public void minusListenNum() {
