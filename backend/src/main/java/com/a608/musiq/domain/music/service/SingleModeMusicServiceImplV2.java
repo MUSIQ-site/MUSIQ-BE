@@ -161,6 +161,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	 * @returnDeletePrevGameResponseDto
 	 */
 	@Override
+	@Transactional
 	public DeletePrevGameResponseDto deletePrevGame(String token) {
 		UUID memberId = jwtValidator.getData(token);
 
@@ -428,7 +429,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	 * 다음 라운드
 	 *
 	 * @param token
-	 * @return
+	 * @return RoundInfoResponseDto
 	 */
 	@Override
 	public RoundInfoResponseDto nextRound(String token) {
@@ -464,6 +465,50 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 					room.getTryNum(),
 					room.getListenNum(),
 					music.getUrl()
+			);
+		}
+		else {
+			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
+		}
+	}
+
+	/**
+	 * 게임 종료
+	 *
+	 * @param token
+	 * @return SingleGameOverResponseDto
+	 */
+	@Override
+	@Transactional
+	public SingleGameOverResponseDto gameOver(String token) {
+		UUID memberId = jwtValidator.getData(token);
+
+		// 현재 진행 중인 게임이 있는지 Map에서 확인
+		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
+
+		if(isExist) {
+			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
+			boolean isRoundEnd = room.getIsRoundEnded();
+
+			// 만약 라운드가 종료되지 않은 상태에서 호출되었다면 로직 수행 X
+			if(!isRoundEnd) {
+				throw new SingleModeException(SingleModeExceptionInfo.ONGOING_ROUND);
+			}
+
+			// 만약 목숨이 남거나 마지막 곡이 아니라면 예외 throw
+			if(room.getLife() > 0 && room.getRound() < room.getMusicList().size())
+				throw new SingleModeException(SingleModeExceptionInfo.NOT_GAME_OVER);
+
+			// 게임 종료 처리
+			gameEnd(room);
+
+			// Map에서 삭제
+			singleModeRoomManager.getRooms().remove(memberId);
+
+			return SingleGameOverResponseDto.from(
+					room.getYear(),
+					room.getDifficulty().getValue(),
+					room.getRound()
 			);
 		}
 		else {

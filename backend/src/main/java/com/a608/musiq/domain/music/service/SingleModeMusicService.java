@@ -35,4 +35,7 @@ public interface SingleModeMusicService {
 
     // 다음 라운드
     RoundInfoResponseDto nextRound(String token);
+    
+    // 게임 종료
+    SingleGameOverResponseDto gameOver(String token);
 }
