@@ -526,7 +526,7 @@ public class GameService {
 			UserInfoItem.builder().nickname(memberInfo.getNickname()).score(0.0)
 				.isSkipped(false).build());
 
-//		validateMaxUserNumber(createGameRoomRequestDto.getMaxUserNumber());
+		validateMaxUserNumber(createGameRoomRequestDto.getMaxUserNumber());
 
 		GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
 			.title(createGameRoomRequestDto.getRoomName())
@@ -536,8 +536,7 @@ public class GameService {
 			.roomManagerNickname(memberInfo.getNickname())
 			.numberOfProblems(createGameRoomRequestDto.getQuizAmount())
 			.year(createGameRoomRequestDto.getMusicYear())
-			.maxUserNumber(6)
-//			.maxUserNumber(createGameRoomRequestDto.getMaxUserNumber())
+			.maxUserNumber(createGameRoomRequestDto.getMaxUserNumber())
 			.totalUsers(0)
 			.gameRoomType(GameRoomType.WAITING)
 			.userInfoItems(userInfoItems).build();
@@ -673,8 +672,7 @@ public class GameService {
 		return multiModeCreateGameRoomLogRepository.save(MultiModeCreateGameRoomLog.builder()
 				.title(createGameRoomRequestDto.getRoomName())
 				.years(createGameRoomRequestDto.getMusicYear())
-//				.maxUserNumber(createGameRoomRequestDto.getMaxUserNumber())
-				.maxUserNumber(6)
+				.maxUserNumber(createGameRoomRequestDto.getMaxUserNumber())
 				.quizAmount(createGameRoomRequestDto.getQuizAmount())
 				.roomManagerNickname(nickname)
 				.password(createGameRoomRequestDto.getPassword())
