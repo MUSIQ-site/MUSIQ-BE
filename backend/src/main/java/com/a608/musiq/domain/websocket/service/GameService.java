@@ -798,6 +798,9 @@ public class GameService {
 
 		GameRoom gameRoom = GameValue.getGameRooms().get(modifyGameRoomInformationRequestDto.getGameRoomNo());
 
+		// 게임방에서 정보 변경
+		gameRoom.modifyInformation(modifyGameRoomInformationRequestDto);
+
 		// log에 변경 내용 저장
 		multiModeModifyGameRoomInformationLogRepository.save(
 			MultiModeModifyGameRoomInformationLog.builder()
@@ -812,9 +815,6 @@ public class GameService {
 				.modifiedMaxUserNumber(modifyGameRoomInformationRequestDto.getMaxUserNumber())
 				.build()
 		);
-
-		// 게임방에서 정보 변경
-		gameRoom.modifyInformation(modifyGameRoomInformationRequestDto);
 
 		// 퍼블리시
 		String destination = getDestination(modifyGameRoomInformationRequestDto.getGameRoomNo());
@@ -851,6 +851,33 @@ public class GameService {
 
 		if (!gameRoom.getGameRoomType().equals(GameRoomType.WAITING)) {
 			throw new MultiModeException(MultiModeExceptionInfo.ALREADY_STARTED_ROOM);
+		}
+
+		validateModifyGameRoomInformation(modifyGameRoomInformationRequestDto);
+	}
+
+	/**
+	 * 게임방 정보 변경 유효성 검사
+	 *
+	 * @param modifyGameRoomInformationRequestDto
+	 */
+	private void validateModifyGameRoomInformation(ModifyGameRoomInformationRequestDto modifyGameRoomInformationRequestDto) {
+		if (GameRoomInformation.MINIMUM_TITLE_LENGTH.getValue() > modifyGameRoomInformationRequestDto.getTitle().length() ||
+			GameRoomInformation.MAXIMUM_TITLE_LENGTH.getValue() < modifyGameRoomInformationRequestDto.getTitle().length()) {
+			throw new MultiModeException(MultiModeExceptionInfo.INVALID_TITLE_LENGTH);
+		}
+		else if (modifyGameRoomInformationRequestDto.getYear().equals("")) {
+			throw new MultiModeException(MultiModeExceptionInfo.INVALID_YEAR);
+		}
+		else if (modifyGameRoomInformationRequestDto.getQuizAmount() != GameRoomInformation.QUIZ_AMOUNT_3.getValue() &&
+				modifyGameRoomInformationRequestDto.getQuizAmount() != GameRoomInformation.QUIZ_AMOUNT_10.getValue() &&
+				modifyGameRoomInformationRequestDto.getQuizAmount() != GameRoomInformation.QUIZ_AMOUNT_20.getValue() &&
+				modifyGameRoomInformationRequestDto.getQuizAmount() != GameRoomInformation.QUIZ_AMOUNT_30.getValue()) {
+			throw new MultiModeException(MultiModeExceptionInfo.INVALID_QUIZ_AMOUNT);
+		}
+		else if (GameRoomInformation.MINIMUM_MAX_USER_NUMBER.getValue() > modifyGameRoomInformationRequestDto.getMaxUserNumber() ||
+			GameRoomInformation.MAXIMUM_MAX_USER_NUMBER.getValue() < modifyGameRoomInformationRequestDto.getMaxUserNumber()) {
+			throw new MultiModeException(MultiModeExceptionInfo.INVALID_MAX_USER_NUMBER);
 		}
 	}
 
