@@ -848,9 +848,11 @@ public class GameService {
 		if (gameRoom.isNotRoomManager(uuid)) {
 			throw new MultiModeException(MultiModeExceptionInfo.NOT_ALLOWED_USER);
 		}
-
 		if (!gameRoom.getGameRoomType().equals(GameRoomType.WAITING)) {
 			throw new MultiModeException(MultiModeExceptionInfo.ALREADY_STARTED_ROOM);
+		}
+		if (gameRoom.getTotalUsers() > modifyGameRoomInformationRequestDto.getMaxUserNumber()) {
+			throw new MultiModeException(MultiModeExceptionInfo.INVALID_MAX_USER_NUMBER);
 		}
 
 		validateModifyGameRoomInformation(modifyGameRoomInformationRequestDto);
