@@ -220,6 +220,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 					room.getLife(),
 					room.getTryNum(),
 					room.getListenNum(),
+					room.getYear(),
 					url
 			);
 		} else {
@@ -274,6 +275,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 				room.getLife(),
 				room.getTryNum(),
 				room.getListenNum(),
+				room.getYear(),
 				url
 		);
 	}
@@ -474,6 +476,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 					room.getLife(),
 					room.getTryNum(),
 					room.getListenNum(),
+					room.getYear(),
 					music.getUrl()
 			);
 		}

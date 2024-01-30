@@ -12,8 +12,10 @@ public class RoundInfoResponseDto {
     private Integer tryNum;
     private Integer listenNum;
     private String musicUrl;
+    private String year;
 
-    public static RoundInfoResponseDto from(String difficulty, Integer round, Integer life, Integer tryNum, Integer listenNum, String musicUrl) {
+    public static RoundInfoResponseDto from(String difficulty, Integer round, Integer life, Integer tryNum,
+                                            Integer listenNum, String year, String musicUrl) {
         return RoundInfoResponseDto.builder()
                 .difficulty(difficulty)
                 .round(round)
@@ -21,6 +23,7 @@ public class RoundInfoResponseDto {
                 .tryNum(tryNum)
                 .listenNum(listenNum)
                 .musicUrl(musicUrl)
+                .year(year)
                 .build();
     }
 }
