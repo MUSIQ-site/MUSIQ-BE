@@ -10,14 +10,16 @@ public class SingleGameOverResponseDto {
     private String difficulty;
     private Integer round;
     private Double exp;
+    private Boolean isPerfectGame;
 
     public static SingleGameOverResponseDto from(String year, String difficulty, Integer round,
-                                                 Double exp) {
+                                                 Double exp, Boolean isPerfectGame) {
         return SingleGameOverResponseDto.builder()
                 .year(year)
                 .difficulty(difficulty)
                 .round(round)
                 .exp(exp)
+                .isPerfectGame(isPerfectGame)
                 .build();
     }
 }
