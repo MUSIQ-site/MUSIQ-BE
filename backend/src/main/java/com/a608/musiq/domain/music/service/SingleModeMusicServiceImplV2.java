@@ -527,6 +527,9 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 			if(room.getLife() > 0 && room.getRound() < room.getMusicList().size())
 				throw new SingleModeException(SingleModeExceptionInfo.NOT_GAME_OVER);
 
+			// 모든 문제를 맞췄는지 확인
+			Boolean isPerfectGame = room.getRound() == room.getMusicList().size();
+
 			// 게임 종료 처리
 			double gainedExp = gameEnd(room);
 
@@ -537,7 +540,8 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 					room.getYear(),
 					room.getDifficulty().getValue(),
 					room.getRound(),
-					gainedExp
+					gainedExp,
+					isPerfectGame
 			);
 		}
 		else {
