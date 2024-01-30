@@ -203,12 +203,13 @@ public class SingleModeMusicV2Controller {
 	 */
 	@PatchMapping("/log")
 	private ResponseEntity<BaseResponse<AddIpInLogResponseDto>> addIpInLog(
+		@RequestHeader("accessToken") String token,
 		@RequestBody AddIpInLogRequestDto addIpInLogRequestDto
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<AddIpInLogResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(musicService.addIpInLog(addIpInLogRequestDto))
+				.data(musicService.addIpInLog(token, addIpInLogRequestDto))
 				.build());
 	}
 }

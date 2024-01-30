@@ -109,19 +109,29 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	/**
 	 * 로그에 ip 추가
 	 *
-	 * @param addIpInLogRequestDto
+	 * @param token, addIpInLogRequestDto
 	 * @see AddIpInLogResponseDto
 	 * @return AddIpInLogResponseDto
 	 */
 	@Override
 	@Transactional
-	public AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto) {
-		SingleModeLog log = singleModeLogRepository.findById(addIpInLogRequestDto.getRoomId())
-			.orElseThrow(() -> new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG));
+	public AddIpInLogResponseDto addIpInLog(String token, AddIpInLogRequestDto addIpInLogRequestDto) {
+		UUID memberId = jwtValidator.getData(token);
 
-		log.addIp(addIpInLogRequestDto.getUserIp());
+		// 현재 memberId가 이전에 종료되지 않은 게임이 있는지 Map에서 탐색
+		boolean isExist = singleModeRoomManager.getRooms().containsKey(memberId);
 
-		return AddIpInLogResponseDto.of(log.getIp());
+		// 진행 중이었던 방이 있는 경우
+		if(isExist) {
+			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
+			SingleModeLog log = singleModeLogRepository.findById(room.getRoomId())
+					.orElseThrow(() -> new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG));
+
+			log.addIp(addIpInLogRequestDto.getUserIp());
+			return AddIpInLogResponseDto.of(log.getIp());
+		} else {
+			throw new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG);
+		}
 	}
 
 	/**
