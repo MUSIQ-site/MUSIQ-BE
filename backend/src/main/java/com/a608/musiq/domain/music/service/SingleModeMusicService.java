@@ -7,7 +7,7 @@ import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 
 public interface SingleModeMusicService {
 
-    AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto);
+    AddIpInLogResponseDto addIpInLog(String token, AddIpInLogRequestDto addIpInLogRequestDto);
 
     // 진행 중인 게임 체크
     CheckPrevGameResponseDto checkPrevGame(String token);
