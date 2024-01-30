@@ -155,6 +155,21 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 		// 있는 경우
 		if(isExist) {
 			SingleGameRoom room = singleModeRoomManager.getRooms().get(memberId);
+
+			// 라운드가 종료된 상태이면
+			if(room.getIsRoundEnded()) {
+
+				// 만약 목숨이 0이거나 마지막 곡이라면 게임 종료
+				if(room.getLife() == 0 || room.getRound() == room.getMusicList().size()) {
+					gameEnd(room);
+					singleModeRoomManager.getRooms().remove(memberId);
+					return CheckPrevGameResponseDto.from(Boolean.FALSE, EMPTY_STRING, EMPTY_STRING, NUMBER_FOR_INITIALIZE, NUMBER_FOR_INITIALIZE);
+				}
+
+				// 그냥 라운드만 종료된 상태라면 다음 라운드로 이동
+				room.goNextRound();
+			}
+
 			year = room.getYear();
 			difficulty = room.getDifficulty().getValue();
 			round = room.getRound();
