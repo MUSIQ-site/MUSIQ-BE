@@ -9,12 +9,15 @@ public class SingleGameOverResponseDto {
     private String year;
     private String difficulty;
     private Integer round;
+    private Double exp;
 
-    public static SingleGameOverResponseDto from(String year, String difficulty, Integer round) {
+    public static SingleGameOverResponseDto from(String year, String difficulty, Integer round,
+                                                 Double exp) {
         return SingleGameOverResponseDto.builder()
                 .year(year)
                 .difficulty(difficulty)
                 .round(round)
+                .exp(exp)
                 .build();
     }
 }

@@ -513,7 +513,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 				throw new SingleModeException(SingleModeExceptionInfo.NOT_GAME_OVER);
 
 			// 게임 종료 처리
-			gameEnd(room);
+			double gainedExp = gameEnd(room);
 
 			// Map에서 삭제
 			singleModeRoomManager.getRooms().remove(memberId);
@@ -521,7 +521,8 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 			return SingleGameOverResponseDto.from(
 					room.getYear(),
 					room.getDifficulty().getValue(),
-					room.getRound()
+					room.getRound(),
+					gainedExp
 			);
 		}
 		else {
@@ -535,7 +536,7 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 	 * @param room
 	 */
 	@Transactional
-	public void gameEnd(SingleGameRoom room) {
+	public double gameEnd(SingleGameRoom room) {
 		SingleModeLog log = singleModeLogRepository.findById(room.getRoomId())
 			.orElseThrow(() -> new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG));
 
@@ -552,6 +553,9 @@ public class SingleModeMusicServiceImplV2 implements SingleModeMusicService {
 
 		// 로그 추가 데이터 입력
 		log.addAdditionalInformation(room.getRound(), exp);
+
+		// 얻은 경험치 리턴
+		return exp;
 	}
 
 	/**
