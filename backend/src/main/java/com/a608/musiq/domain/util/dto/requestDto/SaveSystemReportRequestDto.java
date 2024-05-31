@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.util.dto.requestDto;
 
+import com.a608.musiq.domain.util.Data.ReportType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

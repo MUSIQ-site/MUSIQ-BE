@@ -1,5 +1,8 @@
 package com.a608.musiq.domain.util.service;
 
+import com.a608.musiq.domain.admin.dto.GetReportBugItem;
+import com.a608.musiq.domain.admin.dto.GetReportSuggestionItem;
+import com.a608.musiq.domain.admin.dto.responseDto.GetReportResponseDto;
 import com.a608.musiq.domain.member.domain.Member;
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
@@ -14,14 +17,18 @@ import com.a608.musiq.global.exception.info.MemberExceptionInfo;
 import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
 import com.a608.musiq.global.jwt.JwtValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ReportService {
+    private final static int PAGINATION_NUMBER = 1;
 
     private final JwtValidator jwtValidator;
     private final MemberRepository memberRepository;
@@ -47,5 +54,23 @@ public class ReportService {
         return SaveSystemReportResponseDto.builder()
                 .isSuccess(true)
                 .build();
+    }
+
+    /**
+     * 신고 조회
+     *
+     * @param page
+     * @param size
+     * @return GetReportResponseDto
+     */
+    public GetReportResponseDto getReport(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page - PAGINATION_NUMBER, size);
+        List<GetReportBugItem> bugItems =
+                systemReportLogJpaRepository.findBugReportsInRangeWithPagination(pageable).getContent();
+        List<GetReportSuggestionItem> suggestionItems =
+                systemReportLogJpaRepository.findSuggestionReportsInRangeWithPagination(pageable).getContent();
+
+        return GetReportResponseDto.from(bugItems, suggestionItems);
     }
 }
