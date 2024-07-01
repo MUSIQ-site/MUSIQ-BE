@@ -1,7 +1,9 @@
 package com.a608.musiq.domain.util.service;
 
+import com.a608.musiq.domain.admin.dto.GetBugReportItem;
 import com.a608.musiq.domain.admin.dto.GetReportItem;
 import com.a608.musiq.domain.admin.dto.GetSuggestionReportItem;
+import com.a608.musiq.domain.admin.dto.responseDto.GetBugReportResponseDto;
 import com.a608.musiq.domain.admin.dto.responseDto.GetReportResponseDto;
 import com.a608.musiq.domain.admin.dto.responseDto.GetSuggestionResponseDto;
 import com.a608.musiq.domain.member.domain.Member;
@@ -67,6 +69,7 @@ public class ReportService {
      */
     public GetReportResponseDto getReport(int page, int size) {
         long totalAmount = systemReportLogJpaRepository.count();
+
         Pageable pageable = PageRequest.of(page - PAGINATION_NUMBER, size);
         List<GetReportItem> reportItems =
                 systemReportLogJpaRepository.findReportsInRangeWithPagination(pageable).getContent();
@@ -89,6 +92,23 @@ public class ReportService {
                 systemReportLogJpaRepository.findSuggestionReportsInRangeWithPagination(pageable).getContent();
 
         return GetSuggestionResponseDto.from(suggestionReportAmount, suggestionReportItems);
+    }
+
+    /**
+     * 버그 신고 조회
+     *
+     * @param page
+     * @param size
+     * @return GetBugReportResponseDto
+     */
+    public GetBugReportResponseDto getBugReport(int page, int size) {
+        long bugReportAmount = systemReportLogJpaRepository.countByType(ReportType.Bug);
+
+        Pageable pageable = PageRequest.of(page - PAGINATION_NUMBER, size);
+        List<GetBugReportItem> bugReportItems =
+                systemReportLogJpaRepository.findBugReportsInRangeWithPagination(pageable).getContent();
+
+        return GetBugReportResponseDto.from(bugReportAmount, bugReportItems);
     }
 
 

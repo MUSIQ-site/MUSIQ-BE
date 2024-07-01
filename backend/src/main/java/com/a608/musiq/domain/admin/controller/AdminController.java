@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.admin.controller;
 
+import com.a608.musiq.domain.admin.dto.responseDto.GetBugReportResponseDto;
 import com.a608.musiq.domain.admin.dto.responseDto.GetReportResponseDto;
 import com.a608.musiq.domain.admin.dto.responseDto.GetSuggestionResponseDto;
 import com.a608.musiq.domain.util.service.ReportService;
@@ -39,4 +40,16 @@ public class AdminController {
                 .data(reportService.getSuggestionReport(page, size))
                 .build());
     }
+
+    @GetMapping("/bug")
+    private ResponseEntity<BaseResponse<GetBugReportResponseDto>> getBugReport(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(BaseResponse.<GetBugReportResponseDto>builder()
+                .code(HttpStatus.OK.value())
+                .data(reportService.getBugReport(page, size))
+                .build());
+    }
+
 }
