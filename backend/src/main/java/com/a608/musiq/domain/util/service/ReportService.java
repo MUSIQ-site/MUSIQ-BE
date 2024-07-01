@@ -1,7 +1,6 @@
 package com.a608.musiq.domain.util.service;
 
-import com.a608.musiq.domain.admin.dto.GetReportBugItem;
-import com.a608.musiq.domain.admin.dto.GetReportSuggestionItem;
+import com.a608.musiq.domain.admin.dto.GetReportItem;
 import com.a608.musiq.domain.admin.dto.responseDto.GetReportResponseDto;
 import com.a608.musiq.domain.member.domain.Member;
 import com.a608.musiq.domain.member.domain.MemberInfo;
@@ -57,20 +56,20 @@ public class ReportService {
     }
 
     /**
-     * 신고 조회
+     * 신고 전체 조회
      *
      * @param page
      * @param size
      * @return GetReportResponseDto
      */
     public GetReportResponseDto getReport(int page, int size) {
-
+        long totalAmount = systemReportLogJpaRepository.count();
         Pageable pageable = PageRequest.of(page - PAGINATION_NUMBER, size);
-        List<GetReportBugItem> bugItems =
-                systemReportLogJpaRepository.findBugReportsInRangeWithPagination(pageable).getContent();
-        List<GetReportSuggestionItem> suggestionItems =
-                systemReportLogJpaRepository.findSuggestionReportsInRangeWithPagination(pageable).getContent();
+        List<GetReportItem> reportItems =
+                systemReportLogJpaRepository.findReportsInRangeWithPagination(pageable).getContent();
 
-        return GetReportResponseDto.from(bugItems, suggestionItems);
+        return GetReportResponseDto.from(totalAmount, reportItems);
     }
+
+
 }

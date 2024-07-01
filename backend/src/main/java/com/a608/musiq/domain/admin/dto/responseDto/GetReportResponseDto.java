@@ -1,7 +1,6 @@
 package com.a608.musiq.domain.admin.dto.responseDto;
 
-import com.a608.musiq.domain.admin.dto.GetReportBugItem;
-import com.a608.musiq.domain.admin.dto.GetReportSuggestionItem;
+import com.a608.musiq.domain.admin.dto.GetReportItem;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,13 +9,13 @@ import java.util.List;
 @Builder
 @Getter
 public class GetReportResponseDto {
-    private List<GetReportBugItem> bugItems;
-    private List<GetReportSuggestionItem> suggestionItems;
+    private long totalAmount;
+    private List<GetReportItem> reportItems;
 
-    public static GetReportResponseDto from(List<GetReportBugItem> bugItems, List<GetReportSuggestionItem> suggestionItems) {
+    public static GetReportResponseDto from(long totalAmount, List<GetReportItem> reportItems) {
         return GetReportResponseDto.builder()
-                .bugItems(bugItems)
-                .suggestionItems(suggestionItems)
+                .totalAmount(totalAmount)
+                .reportItems(reportItems)
                 .build();
     }
 }
