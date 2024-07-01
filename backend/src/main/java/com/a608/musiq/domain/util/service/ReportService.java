@@ -1,11 +1,14 @@
 package com.a608.musiq.domain.util.service;
 
 import com.a608.musiq.domain.admin.dto.GetReportItem;
+import com.a608.musiq.domain.admin.dto.GetSuggestionReportItem;
 import com.a608.musiq.domain.admin.dto.responseDto.GetReportResponseDto;
+import com.a608.musiq.domain.admin.dto.responseDto.GetSuggestionResponseDto;
 import com.a608.musiq.domain.member.domain.Member;
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.member.repository.MemberRepository;
+import com.a608.musiq.domain.util.Data.ReportType;
 import com.a608.musiq.domain.util.domain.SystemReportLog;
 import com.a608.musiq.domain.util.dto.requestDto.SaveSystemReportRequestDto;
 import com.a608.musiq.domain.util.dto.responseDto.SaveSystemReportResponseDto;
@@ -69,6 +72,23 @@ public class ReportService {
                 systemReportLogJpaRepository.findReportsInRangeWithPagination(pageable).getContent();
 
         return GetReportResponseDto.from(totalAmount, reportItems);
+    }
+
+    /**
+     * 건의 조회
+     *
+     * @param page
+     * @param size
+     * @return GetSuggestionResponseDto
+     */
+    public GetSuggestionResponseDto getSuggestionReport(int page, int size) {
+        long suggestionReportAmount = systemReportLogJpaRepository.countByType(ReportType.Suggestion);
+
+        Pageable pageable = PageRequest.of(page - PAGINATION_NUMBER, size);
+        List<GetSuggestionReportItem> suggestionReportItems =
+                systemReportLogJpaRepository.findSuggestionReportsInRangeWithPagination(pageable).getContent();
+
+        return GetSuggestionResponseDto.from(suggestionReportAmount, suggestionReportItems);
     }
 
 
