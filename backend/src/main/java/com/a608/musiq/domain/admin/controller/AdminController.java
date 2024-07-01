@@ -19,6 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
     private final ReportService reportService;
 
+    /**
+     * 신고 전체 조회
+     *
+     * @param page
+     * @param size
+     */
     @GetMapping("/report")
     private ResponseEntity<BaseResponse<GetReportResponseDto>> getReport(
             @RequestParam("page") int page,
@@ -30,6 +36,12 @@ public class AdminController {
                 .build());
     }
 
+    /**
+     * 건의 조회
+     *
+     * @param page
+     * @param size
+     */
     @GetMapping("/suggestion")
     private ResponseEntity<BaseResponse<GetSuggestionResponseDto>> getSuggestionReport(
             @RequestParam("page") int page,
@@ -41,6 +53,12 @@ public class AdminController {
                 .build());
     }
 
+    /**
+     * 버그 신고 조회
+     *
+     * @param page
+     * @param size
+     */
     @GetMapping("/bug")
     private ResponseEntity<BaseResponse<GetBugReportResponseDto>> getBugReport(
             @RequestParam("page") int page,
