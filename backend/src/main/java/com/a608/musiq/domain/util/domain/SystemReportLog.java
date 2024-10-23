@@ -1,13 +1,13 @@
 package com.a608.musiq.domain.util.domain;
 
-import com.a608.musiq.domain.util.dto.requestDto.ReportType;
+import com.a608.musiq.domain.util.Data.ReportType;
+import com.a608.musiq.domain.util.Data.ReportTypeConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +23,7 @@ public class SystemReportLog {
 
     @NotNull
     @Column
+    @Convert(converter = ReportTypeConverter.class)
     private ReportType type;
 
     @NotNull
