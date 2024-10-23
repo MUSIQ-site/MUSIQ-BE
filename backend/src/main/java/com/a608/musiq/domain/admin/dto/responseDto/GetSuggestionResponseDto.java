@@ -10,11 +10,15 @@ import java.util.List;
 @Getter
 public class GetSuggestionResponseDto {
     private long suggestionReportAmount;
+    private int page;
+    private int size;
     private List<GetSuggestionReportItem> suggestionItems;
 
-    public static GetSuggestionResponseDto from(long suggestionReportAmount, List<GetSuggestionReportItem> suggestionItems) {
+    public static GetSuggestionResponseDto from(long suggestionReportAmount, int page, int size, List<GetSuggestionReportItem> suggestionItems) {
         return GetSuggestionResponseDto.builder()
                 .suggestionReportAmount(suggestionReportAmount)
+                .page(page)
+                .size(size)
                 .suggestionItems(suggestionItems)
                 .build();
     }

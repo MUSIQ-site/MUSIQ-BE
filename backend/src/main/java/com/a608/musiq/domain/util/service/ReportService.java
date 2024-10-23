@@ -74,7 +74,7 @@ public class ReportService {
         List<GetReportItem> reportItems =
                 systemReportLogJpaRepository.findReportsInRangeWithPagination(pageable).getContent();
 
-        return GetReportResponseDto.from(totalAmount, reportItems);
+        return GetReportResponseDto.from(totalAmount, page, size, reportItems);
     }
 
     /**
@@ -91,7 +91,7 @@ public class ReportService {
         List<GetSuggestionReportItem> suggestionReportItems =
                 systemReportLogJpaRepository.findSuggestionReportsInRangeWithPagination(pageable).getContent();
 
-        return GetSuggestionResponseDto.from(suggestionReportAmount, suggestionReportItems);
+        return GetSuggestionResponseDto.from(suggestionReportAmount, page, size, suggestionReportItems);
     }
 
     /**
@@ -108,7 +108,7 @@ public class ReportService {
         List<GetBugReportItem> bugReportItems =
                 systemReportLogJpaRepository.findBugReportsInRangeWithPagination(pageable).getContent();
 
-        return GetBugReportResponseDto.from(bugReportAmount, bugReportItems);
+        return GetBugReportResponseDto.from(bugReportAmount, page, size, bugReportItems);
     }
 
 
